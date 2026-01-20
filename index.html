@@ -1,0 +1,1363 @@
+<!doctype html>
+<html lang="en" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SmartMess - Smart Hostel Food Management</title>
+  <script src="/_sdk/element_sdk.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet">
+  <style>
+    body {
+      box-sizing: border-box;
+      font-family: 'Inter', sans-serif;
+    }
+    
+    * {
+      box-sizing: border-box;
+    }
+    
+    .nav-link {
+      transition: all 0.2s ease;
+    }
+    
+    .nav-link:hover {
+      background: rgba(59, 130, 246, 0.1);
+    }
+    
+    .nav-link.active {
+      background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+      color: white;
+    }
+    
+    .card {
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08), 0 4px 12px rgba(0,0,0,0.05);
+      transition: all 0.3s ease;
+    }
+    
+    .card:hover {
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1), 0 8px 24px rgba(0,0,0,0.08);
+    }
+    
+    .kpi-card {
+      background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+      border: 1px solid #e2e8f0;
+    }
+    
+    .gradient-blue {
+      background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+    }
+    
+    .gradient-green {
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    }
+    
+    .gradient-orange {
+      background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    }
+    
+    .gradient-purple {
+      background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+    }
+    
+    .gradient-red {
+      background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    }
+    
+    .btn-primary {
+      background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+      transition: all 0.2s ease;
+    }
+    
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+    }
+    
+    .btn-success {
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      transition: all 0.2s ease;
+    }
+    
+    .btn-success:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+    }
+    
+    .btn-danger {
+      background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+      transition: all 0.2s ease;
+    }
+    
+    .btn-danger:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
+    }
+    
+    .toast {
+      animation: slideIn 0.3s ease, fadeOut 0.3s ease 2.7s;
+    }
+    
+    @keyframes slideIn {
+      from { transform: translateX(100%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+    
+    @keyframes fadeOut {
+      from { opacity: 1; }
+      to { opacity: 0; }
+    }
+    
+    .pulse-dot {
+      animation: pulse 2s infinite;
+    }
+    
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+    
+    .progress-bar {
+      transition: width 0.5s ease;
+    }
+    
+    .menu-highlight {
+      border-left: 4px solid #10b981;
+      background: linear-gradient(90deg, rgba(16, 185, 129, 0.1) 0%, transparent 100%);
+    }
+    
+    .popular-badge {
+      background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+    }
+    
+    .insight-card {
+      border-left: 4px solid #3b82f6;
+    }
+    
+    .anomaly-row {
+      background: rgba(239, 68, 68, 0.1);
+      border-left: 3px solid #ef4444;
+    }
+    
+    .scrollbar-thin::-webkit-scrollbar {
+      width: 6px;
+    }
+    
+    .scrollbar-thin::-webkit-scrollbar-track {
+      background: #f1f5f9;
+    }
+    
+    .scrollbar-thin::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 3px;
+    }
+    
+    .chart-bar {
+      transition: height 0.5s ease;
+    }
+  </style>
+  <style>@view-transition { navigation: auto; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+ </head>
+ <body class="h-full bg-slate-50 text-slate-800 overflow-auto">
+  <div id="app" class="min-h-full flex flex-col"><!-- Top Navigation -->
+   <nav class="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm">
+    <div class="max-w-7xl mx-auto px-4">
+     <div class="flex items-center justify-between h-16">
+      <div class="flex items-center gap-3">
+       <div class="w-10 h-10 gradient-green rounded-xl flex items-center justify-center shadow-lg">
+        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+        </svg>
+       </div>
+       <div>
+        <h1 id="app-title" class="text-xl font-bold text-slate-800">SmartMess</h1>
+        <p id="hostel-name" class="text-xs text-slate-500">Sunrise Hostel</p>
+       </div>
+      </div>
+      <div class="flex items-center gap-1"><button onclick="switchModule('student')" id="nav-student" class="nav-link active px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+        </svg> Student </button> <button onclick="switchModule('dashboard')" id="nav-dashboard" class="nav-link px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+        </svg> Dashboard </button> <button onclick="switchModule('staff')" id="nav-staff" class="nav-link px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+        </svg> Mess Staff </button> <button onclick="switchModule('menu')" id="nav-menu" class="nav-link px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+        </svg> Weekly Menu </button> <button onclick="switchModule('analytics')" id="nav-analytics" class="nav-link px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+        </svg> Analytics </button> <button onclick="switchModule('settings')" id="nav-settings" class="nav-link px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+        </svg> Settings </button>
+      </div>
+     </div>
+    </div>
+   </nav><!-- Main Content Area -->
+   <div class="flex-1 flex"><!-- Sidebar -->
+    <aside class="w-72 bg-white border-r border-slate-200 p-4 hidden lg:block overflow-y-auto scrollbar-thin">
+     <div class="space-y-4"><!-- Quick Stats -->
+      <div class="card p-4">
+       <h3 class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">Quick Stats</h3>
+       <div class="space-y-3">
+        <div class="flex items-center justify-between"><span class="text-sm text-slate-600">Total Students</span> <span id="sidebar-total" class="text-sm font-bold text-slate-800">500</span>
+        </div>
+        <div class="flex items-center justify-between"><span class="text-sm text-slate-600">Responded Today</span> <span id="sidebar-responded" class="text-sm font-bold text-green-600">342</span>
+        </div>
+        <div class="flex items-center justify-between"><span class="text-sm text-slate-600">Eating Today</span> <span id="sidebar-eating" class="text-sm font-bold text-blue-600">289</span>
+        </div>
+        <div class="flex items-center justify-between"><span class="text-sm text-slate-600">Skipping Today</span> <span id="sidebar-skipping" class="text-sm font-bold text-orange-600">53</span>
+        </div>
+       </div>
+      </div><!-- Today's Meal Status -->
+      <div class="card p-4">
+       <h3 class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">Today's Meal Status</h3>
+       <div class="space-y-2">
+        <div class="flex items-center gap-2">
+         <div class="w-2 h-2 rounded-full bg-green-500"></div><span class="text-sm text-slate-600">Breakfast</span> <span class="ml-auto text-xs px-2 py-0.5 rounded-full bg-green-100 text-green-700">Completed</span>
+        </div>
+        <div class="flex items-center gap-2">
+         <div class="w-2 h-2 rounded-full bg-blue-500 pulse-dot"></div><span class="text-sm text-slate-600">Lunch</span> <span class="ml-auto text-xs px-2 py-0.5 rounded-full bg-blue-100 text-blue-700">Active</span>
+        </div>
+        <div class="flex items-center gap-2">
+         <div class="w-2 h-2 rounded-full bg-slate-300"></div><span class="text-sm text-slate-600">Dinner</span> <span class="ml-auto text-xs px-2 py-0.5 rounded-full bg-slate-100 text-slate-600">Upcoming</span>
+        </div>
+       </div>
+      </div><!-- Voting Status -->
+      <div class="card p-4">
+       <div class="flex items-center justify-between mb-3">
+        <h3 class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Voting Status</h3><span id="voting-status-badge" class="px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700">Open</span>
+       </div>
+       <div class="space-y-2">
+        <div class="flex items-center justify-between text-sm"><span class="text-slate-600">Closes in</span> <span id="sidebar-countdown" class="font-mono font-bold text-blue-600">02:34:15</span>
+        </div>
+        <div class="w-full bg-slate-200 rounded-full h-2">
+         <div id="sidebar-progress" class="progress-bar bg-gradient-to-r from-blue-500 to-blue-600 h-2 rounded-full" style="width: 68%"></div>
+        </div>
+        <p class="text-xs text-slate-500">68% of students have voted</p>
+       </div>
+      </div><!-- Intelligence Badge -->
+      <div class="card p-4 bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-100">
+       <div class="flex items-center gap-2 mb-2">
+        <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+        </svg><span class="text-sm font-semibold text-blue-800">Demand Intelligence</span>
+       </div>
+       <p class="text-xs text-blue-700">Rule-based Demand Intelligence (v1)</p>
+       <p class="text-xs text-slate-500 mt-1">ML integration ready</p>
+      </div>
+     </div>
+    </aside><!-- Main Content -->
+    <main class="flex-1 p-6 overflow-y-auto scrollbar-thin"><!-- Student Module -->
+     <div id="module-student" class="module">
+      <div class="max-w-6xl mx-auto"><!-- Header -->
+       <div class="flex items-center justify-between mb-6">
+        <div>
+         <h2 class="text-2xl font-bold text-slate-800">Student Portal</h2>
+         <p class="text-slate-500">Register your meal preference for today</p>
+        </div>
+        <div class="text-right">
+         <p id="current-date" class="text-lg font-semibold text-slate-800"></p>
+         <p id="current-meal-type" class="text-sm text-blue-600 font-medium">Lunch Time</p>
+        </div>
+       </div>
+       <div class="grid grid-cols-1 lg:grid-cols-3 gap-6"><!-- Today's Menu Card -->
+        <div class="lg:col-span-2">
+         <div class="card p-6">
+          <div class="flex items-center justify-between mb-4">
+           <h3 class="text-lg font-semibold text-slate-800">Today's Menu</h3><span class="px-3 py-1 rounded-full text-sm font-medium gradient-blue text-white">Lunch</span>
+          </div>
+          <div id="todays-menu" class="space-y-3"><!-- Menu items will be populated by JS -->
+          </div><!-- Voting Section -->
+          <div id="voting-section" class="mt-6 pt-6 border-t border-slate-200">
+           <h4 class="text-sm font-semibold text-slate-700 mb-3">Will you be eating this meal?</h4>
+           <div class="flex gap-3"><button onclick="submitVote('eat')" id="btn-eat" class="flex-1 btn-success text-white py-3 px-6 rounded-xl font-medium flex items-center justify-center gap-2">
+             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+             </svg> I will eat </button> <button onclick="submitVote('skip')" id="btn-skip" class="flex-1 btn-danger text-white py-3 px-6 rounded-xl font-medium flex items-center justify-center gap-2">
+             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+             </svg> I will skip </button>
+           </div>
+          </div><!-- Already Voted Section -->
+          <div id="voted-section" class="mt-6 pt-6 border-t border-slate-200 hidden">
+           <div class="bg-green-50 border border-green-200 rounded-xl p-4 flex items-center gap-3">
+            <div class="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center">
+             <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+             </svg>
+            </div>
+            <div>
+             <p class="font-semibold text-green-800">Your response has been recorded!</p>
+             <p id="vote-result-text" class="text-sm text-green-600">You indicated you will eat this meal.</p>
+            </div>
+           </div>
+          </div>
+         </div>
+        </div><!-- Live Stats -->
+        <div class="space-y-4">
+         <div class="card p-5">
+          <h4 class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-4">Live Attendance</h4>
+          <div class="text-center">
+           <p id="live-attendance" class="text-4xl font-bold text-blue-600">289</p>
+           <p class="text-sm text-slate-500">students eating</p>
+          </div>
+          <div class="mt-4 flex items-center justify-center gap-2">
+           <div class="w-2 h-2 rounded-full bg-green-500 pulse-dot"></div><span class="text-xs text-slate-500">Live updates</span>
+          </div>
+         </div>
+         <div class="card p-5">
+          <h4 class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-4">Response Rate</h4>
+          <div class="relative pt-1">
+           <div class="flex items-center justify-between mb-2"><span id="response-percent" class="text-2xl font-bold text-slate-800">68%</span> <span class="text-sm text-slate-500">of hostel</span>
+           </div>
+           <div class="w-full bg-slate-200 rounded-full h-3">
+            <div id="response-bar" class="progress-bar gradient-green h-3 rounded-full" style="width: 68%"></div>
+           </div>
+          </div>
+          <p class="text-xs text-slate-500 mt-2">342 of 500 students responded</p>
+         </div>
+         <div class="card p-5">
+          <h4 class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-4">Voting Closes In</h4>
+          <div class="text-center">
+           <p id="countdown-timer" class="text-3xl font-mono font-bold text-orange-600">02:34:15</p>
+          </div>
+          <div class="mt-3 w-full bg-slate-200 rounded-full h-2">
+           <div id="countdown-bar" class="progress-bar gradient-orange h-2 rounded-full" style="width: 45%"></div>
+          </div>
+         </div>
+        </div>
+       </div>
+      </div>
+     </div><!-- Dashboard Module -->
+     <div id="module-dashboard" class="module hidden">
+      <div class="max-w-7xl mx-auto">
+       <div class="flex items-center justify-between mb-6">
+        <div>
+         <h2 class="text-2xl font-bold text-slate-800">Admin Dashboard</h2>
+         <p class="text-slate-500">Real-time mess operations overview</p>
+        </div>
+        <div class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-green-500 pulse-dot"></span> <span class="text-sm text-slate-600">System Active</span>
+        </div>
+       </div><!-- Decision Banner -->
+       <div class="card p-4 mb-6 bg-gradient-to-r from-blue-500 to-indigo-600 text-white">
+        <div class="flex items-center gap-4">
+         <div class="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center">
+          <svg class="w-7 h-7" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+          </svg>
+         </div>
+         <div class="flex-1">
+          <h3 class="font-semibold text-lg">🎯 Cooking Recommendation Generated</h3>
+          <p class="text-blue-100 text-sm">Demand refined using student intent + past data. Ready BEFORE food preparation begins.</p>
+         </div>
+         <div class="text-right">
+          <p class="text-3xl font-bold">145 kg</p>
+          <p class="text-blue-200 text-sm">Recommended quantity</p>
+         </div>
+        </div>
+       </div><!-- KPI Cards -->
+       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+        <div class="card kpi-card p-5">
+         <div class="flex items-center justify-between">
+          <div>
+           <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Expected Attendance</p>
+           <p id="kpi-attendance" class="text-3xl font-bold text-slate-800 mt-1">289</p>
+           <p class="text-sm text-green-600 flex items-center gap-1 mt-1">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18" />
+            </svg> +12% from yesterday</p>
+          </div>
+          <div class="w-12 h-12 rounded-xl gradient-blue flex items-center justify-center">
+           <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+           </svg>
+          </div>
+         </div>
+        </div>
+        <div class="card kpi-card p-5">
+         <div class="flex items-center justify-between">
+          <div>
+           <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Confidence Score</p>
+           <p id="kpi-confidence" class="text-3xl font-bold text-slate-800 mt-1">94%</p>
+           <p class="text-sm text-slate-500 mt-1">Based on 342 votes</p>
+          </div>
+          <div class="w-12 h-12 rounded-xl gradient-green flex items-center justify-center">
+           <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+           </svg>
+          </div>
+         </div>
+        </div>
+        <div class="card kpi-card p-5">
+         <div class="flex items-center justify-between">
+          <div>
+           <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Est. Food Quantity</p>
+           <p id="kpi-quantity" class="text-3xl font-bold text-slate-800 mt-1">145 kg</p>
+           <p class="text-sm text-orange-600 mt-1">0.5 kg/person avg</p>
+          </div>
+          <div class="w-12 h-12 rounded-xl gradient-orange flex items-center justify-center">
+           <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3" />
+           </svg>
+          </div>
+         </div>
+        </div>
+        <div class="card kpi-card p-5">
+         <div class="flex items-center justify-between">
+          <div>
+           <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Waste Reduction</p>
+           <p id="kpi-waste" class="text-3xl font-bold text-green-600 mt-1">32%</p>
+           <p class="text-sm text-green-600 flex items-center gap-1 mt-1">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+            </svg> Less waste vs last month</p>
+          </div>
+          <div class="w-12 h-12 rounded-xl gradient-purple flex items-center justify-center">
+           <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+           </svg>
+          </div>
+         </div>
+        </div>
+       </div><!-- Charts Section -->
+       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6"><!-- Attendance Chart -->
+        <div class="card p-6">
+         <h3 class="text-lg font-semibold text-slate-800 mb-4">Attendance vs Capacity (Last 7 Days)</h3>
+         <div class="flex items-end justify-between h-48 gap-2">
+          <div class="flex-1 flex flex-col items-center">
+           <div class="w-full bg-slate-100 rounded-t relative" style="height: 140px">
+            <div class="chart-bar absolute bottom-0 w-full gradient-blue rounded-t" style="height: 65%"></div>
+           </div><span class="text-xs text-slate-500 mt-2">Mon</span>
+          </div>
+          <div class="flex-1 flex flex-col items-center">
+           <div class="w-full bg-slate-100 rounded-t relative" style="height: 140px">
+            <div class="chart-bar absolute bottom-0 w-full gradient-blue rounded-t" style="height: 78%"></div>
+           </div><span class="text-xs text-slate-500 mt-2">Tue</span>
+          </div>
+          <div class="flex-1 flex flex-col items-center">
+           <div class="w-full bg-slate-100 rounded-t relative" style="height: 140px">
+            <div class="chart-bar absolute bottom-0 w-full gradient-blue rounded-t" style="height: 82%"></div>
+           </div><span class="text-xs text-slate-500 mt-2">Wed</span>
+          </div>
+          <div class="flex-1 flex flex-col items-center">
+           <div class="w-full bg-slate-100 rounded-t relative" style="height: 140px">
+            <div class="chart-bar absolute bottom-0 w-full gradient-blue rounded-t" style="height: 71%"></div>
+           </div><span class="text-xs text-slate-500 mt-2">Thu</span>
+          </div>
+          <div class="flex-1 flex flex-col items-center">
+           <div class="w-full bg-slate-100 rounded-t relative" style="height: 140px">
+            <div class="chart-bar absolute bottom-0 w-full gradient-blue rounded-t" style="height: 58%"></div>
+           </div><span class="text-xs text-slate-500 mt-2">Fri</span>
+          </div>
+          <div class="flex-1 flex flex-col items-center">
+           <div class="w-full bg-slate-100 rounded-t relative" style="height: 140px">
+            <div class="chart-bar absolute bottom-0 w-full gradient-blue rounded-t" style="height: 45%"></div>
+           </div><span class="text-xs text-slate-500 mt-2">Sat</span>
+          </div>
+          <div class="flex-1 flex flex-col items-center">
+           <div class="w-full bg-slate-100 rounded-t relative" style="height: 140px">
+            <div class="chart-bar absolute bottom-0 w-full gradient-green rounded-t" style="height: 68%"></div>
+           </div><span class="text-xs text-slate-500 mt-2">Today</span>
+          </div>
+         </div>
+         <div class="flex items-center justify-center gap-6 mt-4">
+          <div class="flex items-center gap-2">
+           <div class="w-3 h-3 rounded gradient-blue"></div><span class="text-xs text-slate-600">Past Days</span>
+          </div>
+          <div class="flex items-center gap-2">
+           <div class="w-3 h-3 rounded gradient-green"></div><span class="text-xs text-slate-600">Today</span>
+          </div>
+         </div>
+        </div><!-- Waste Comparison Chart -->
+        <div class="card p-6">
+         <h3 class="text-lg font-semibold text-slate-800 mb-4">Waste Comparison</h3>
+         <div class="space-y-4">
+          <div>
+           <div class="flex items-center justify-between mb-2"><span class="text-sm font-medium text-slate-700">Before SmartMess</span> <span class="text-sm font-bold text-red-600">45 kg/day avg</span>
+           </div>
+           <div class="w-full bg-slate-200 rounded-full h-4">
+            <div class="gradient-red h-4 rounded-full" style="width: 90%"></div>
+           </div>
+          </div>
+          <div>
+           <div class="flex items-center justify-between mb-2"><span class="text-sm font-medium text-slate-700">After SmartMess</span> <span class="text-sm font-bold text-green-600">18 kg/day avg</span>
+           </div>
+           <div class="w-full bg-slate-200 rounded-full h-4">
+            <div class="gradient-green h-4 rounded-full" style="width: 36%"></div>
+           </div>
+          </div>
+          <div class="mt-6 p-4 bg-green-50 rounded-xl border border-green-200">
+           <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center">
+             <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+             </svg>
+            </div>
+            <div>
+             <p class="font-semibold text-green-800">60% Waste Reduction Achieved</p>
+             <p class="text-sm text-green-600">Saving ₹12,000/month in food costs</p>
+            </div>
+           </div>
+          </div>
+         </div><!-- Logic Note -->
+         <div class="mt-6 p-3 bg-blue-50 rounded-lg border border-blue-100">
+          <p class="text-xs text-blue-700"><strong>📊 Intelligence Note:</strong> Demand refined using confirmed student votes (weight: 70%) + historical attendance patterns (weight: 30%)</p>
+         </div>
+        </div>
+       </div>
+      </div>
+     </div><!-- Staff Module -->
+     <div id="module-staff" class="module hidden">
+      <div class="max-w-6xl mx-auto">
+       <div class="flex items-center justify-between mb-6">
+        <div>
+         <h2 class="text-2xl font-bold text-slate-800">Mess Staff Operations</h2>
+         <p class="text-slate-500">Log daily food preparation and wastage data</p>
+        </div>
+       </div>
+       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6"><!-- Input Form -->
+        <div class="card p-6">
+         <h3 class="text-lg font-semibold text-slate-800 mb-4">Log Food Data</h3>
+         <form id="staff-form" class="space-y-4">
+          <div><label for="meal-type-input" class="block text-sm font-medium text-slate-700 mb-1">Meal Type</label> <select id="meal-type-input" class="w-full px-4 py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"> <option value="breakfast">Breakfast</option> <option value="lunch" selected>Lunch</option> <option value="dinner">Dinner</option> </select>
+           <p class="text-xs text-slate-500 mt-1">Select the meal you're logging data for</p>
+          </div>
+          <div><label for="date-input" class="block text-sm font-medium text-slate-700 mb-1">Date</label> <input type="date" id="date-input" class="w-full px-4 py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition">
+           <p class="text-xs text-slate-500 mt-1">Date of the meal service</p>
+          </div>
+          <div><label for="prepared-input" class="block text-sm font-medium text-slate-700 mb-1">Food Prepared (kg)</label> <input type="number" id="prepared-input" placeholder="e.g., 150" min="0" step="0.1" class="w-full px-4 py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition">
+           <p class="text-xs text-slate-500 mt-1">Total weight of food prepared for this meal</p>
+          </div>
+          <div><label for="wasted-input" class="block text-sm font-medium text-slate-700 mb-1">Food Wasted (kg)</label> <input type="number" id="wasted-input" placeholder="e.g., 15" min="0" step="0.1" class="w-full px-4 py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition">
+           <p class="text-xs text-slate-500 mt-1">Total weight of food wasted/leftover</p>
+          </div><button type="submit" class="w-full btn-primary text-white py-3 px-6 rounded-xl font-medium flex items-center justify-center gap-2">
+           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+           </svg> Submit Entry </button>
+         </form>
+        </div><!-- Past Entries -->
+        <div class="card p-6">
+         <h3 class="text-lg font-semibold text-slate-800 mb-4">Recent Entries</h3>
+         <div id="staff-entries" class="space-y-2 max-h-96 overflow-y-auto scrollbar-thin"><!-- Entries populated by JS -->
+         </div>
+        </div>
+       </div>
+      </div>
+     </div><!-- Menu Module -->
+     <div id="module-menu" class="module hidden">
+      <div class="max-w-7xl mx-auto">
+       <div class="flex items-center justify-between mb-6">
+        <div>
+         <h2 class="text-2xl font-bold text-slate-800">Weekly Menu</h2>
+         <p class="text-slate-500">View and manage the hostel mess menu</p>
+        </div><button onclick="toggleMenuEdit()" id="edit-menu-btn" class="btn-primary text-white py-2 px-4 rounded-xl text-sm font-medium flex items-center gap-2">
+         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+         </svg> Edit Menu </button>
+       </div>
+       <div id="weekly-menu-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-7 gap-4"><!-- Menu cards populated by JS -->
+       </div>
+      </div>
+     </div><!-- Analytics Module -->
+     <div id="module-analytics" class="module hidden">
+      <div class="max-w-6xl mx-auto">
+       <div class="flex items-center justify-between mb-6">
+        <div>
+         <h2 class="text-2xl font-bold text-slate-800">Analytics &amp; Insights</h2>
+         <p class="text-slate-500">AI-powered insights from your mess data</p>
+        </div>
+        <div class="flex gap-2"><button onclick="setAnalyticsPeriod('week')" id="period-week" class="px-4 py-2 rounded-lg text-sm font-medium bg-blue-100 text-blue-700">This Week</button> <button onclick="setAnalyticsPeriod('month')" id="period-month" class="px-4 py-2 rounded-lg text-sm font-medium bg-slate-100 text-slate-600">This Month</button>
+        </div>
+       </div><!-- Summary Cards -->
+       <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+        <div class="card p-5">
+         <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Avg Daily Attendance</p>
+         <p id="analytics-attendance" class="text-3xl font-bold text-slate-800 mt-1">312</p>
+         <p class="text-sm text-green-600">+8% vs last period</p>
+        </div>
+        <div class="card p-5">
+         <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Avg Daily Waste</p>
+         <p id="analytics-waste" class="text-3xl font-bold text-slate-800 mt-1">16.5 kg</p>
+         <p class="text-sm text-green-600">-23% vs last period</p>
+        </div>
+        <div class="card p-5">
+         <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Prediction Accuracy</p>
+         <p id="analytics-accuracy" class="text-3xl font-bold text-slate-800 mt-1">91%</p>
+         <p class="text-sm text-blue-600">Based on 21 meals</p>
+        </div>
+       </div><!-- Insights -->
+       <div class="card p-6">
+        <div class="flex items-center gap-2 mb-4">
+         <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+         </svg>
+         <h3 class="text-lg font-semibold text-slate-800">AI-Generated Insights</h3><span class="px-2 py-0.5 rounded-full text-xs bg-blue-100 text-blue-700">Rule-based v1</span>
+        </div>
+        <div id="insights-container" class="space-y-3"><!-- Insights populated by JS -->
+        </div>
+       </div>
+      </div>
+     </div><!-- Settings Module -->
+     <div id="module-settings" class="module hidden">
+      <div class="max-w-2xl mx-auto">
+       <div class="mb-6">
+        <h2 class="text-2xl font-bold text-slate-800">System Settings</h2>
+        <p class="text-slate-500">Configure SmartMess parameters</p>
+       </div>
+       <div class="card p-6">
+        <form id="settings-form" class="space-y-6">
+         <div><label for="hostel-strength" class="block text-sm font-medium text-slate-700 mb-1">Hostel Strength</label> <input type="number" id="hostel-strength" class="w-full px-4 py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition">
+          <p class="text-xs text-slate-500 mt-1">Total number of students in the hostel</p>
+         </div>
+         <div><label for="voting-close-time" class="block text-sm font-medium text-slate-700 mb-1">Voting Close Time</label> <input type="time" id="voting-close-time" class="w-full px-4 py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition">
+          <p class="text-xs text-slate-500 mt-1">Time when daily voting closes</p>
+         </div>
+         <div><label for="waste-threshold" class="block text-sm font-medium text-slate-700 mb-1">Waste Tolerance Threshold (%)</label> <input type="number" id="waste-threshold" min="0" max="100" class="w-full px-4 py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition">
+          <p class="text-xs text-slate-500 mt-1">Acceptable waste percentage before flagging anomaly</p>
+         </div><button type="submit" class="w-full btn-primary text-white py-3 px-6 rounded-xl font-medium"> Save Settings </button>
+        </form>
+        <div class="mt-8 pt-6 border-t border-slate-200">
+         <h4 class="text-sm font-semibold text-slate-700 mb-4">Data Management</h4>
+         <div class="space-y-3"><button onclick="resetDailyVoting()" class="w-full py-2.5 px-4 border border-slate-300 rounded-xl text-sm font-medium text-slate-700 hover:bg-slate-50 transition flex items-center justify-center gap-2">
+           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+           </svg> Reset Daily Voting </button> <button onclick="resetWeeklyData()" class="w-full py-2.5 px-4 border border-red-300 rounded-xl text-sm font-medium text-red-600 hover:bg-red-50 transition flex items-center justify-center gap-2">
+           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+           </svg> Reset All Weekly Data </button>
+         </div>
+        </div>
+       </div>
+      </div>
+     </div>
+    </main>
+   </div><!-- Toast Container -->
+   <div id="toast-container" class="fixed top-20 right-4 z-50 space-y-2"></div>
+  </div>
+  <script>
+    // ==========================================
+    // SmartMess - Rule-based Demand Intelligence
+    // ==========================================
+    // This is a frontend simulation using localStorage
+    // ML integration points are marked with comments
+
+    // Default Configuration
+    const defaultConfig = {
+      app_title: 'SmartMess',
+      hostel_name: 'Sunrise Hostel'
+    };
+
+    let config = { ...defaultConfig };
+
+    // Initialize Element SDK
+    if (window.elementSdk) {
+      window.elementSdk.init({
+        defaultConfig,
+        onConfigChange: async (newConfig) => {
+          config = { ...defaultConfig, ...newConfig };
+          document.getElementById('app-title').textContent = config.app_title || defaultConfig.app_title;
+          document.getElementById('hostel-name').textContent = config.hostel_name || defaultConfig.hostel_name;
+        },
+        mapToCapabilities: (cfg) => ({
+          recolorables: [],
+          borderables: [],
+          fontEditable: undefined,
+          fontSizeable: undefined
+        }),
+        mapToEditPanelValues: (cfg) => new Map([
+          ['app_title', cfg.app_title || defaultConfig.app_title],
+          ['hostel_name', cfg.hostel_name || defaultConfig.hostel_name]
+        ])
+      });
+    }
+
+    // ==========================================
+    // Data Models & Initial State
+    // ==========================================
+
+    const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+    const MEALS = ['Breakfast', 'Lunch', 'Dinner'];
+
+    // Weekly Menu Data
+    const weeklyMenu = {
+      Monday: {
+        Breakfast: ['Poha', 'Boiled Eggs', 'Tea/Coffee', 'Banana'],
+        Lunch: ['Rice', 'Dal Tadka', 'Aloo Gobi', 'Roti', 'Salad'],
+        Dinner: ['Jeera Rice', 'Paneer Butter Masala', 'Naan', 'Raita']
+      },
+      Tuesday: {
+        Breakfast: ['Idli Sambar', 'Coconut Chutney', 'Tea/Coffee'],
+        Lunch: ['Rice', 'Rajma', 'Mixed Veg', 'Roti', 'Pickle'],
+        Dinner: ['Pulao', 'Chole', 'Bhature', 'Onion Salad']
+      },
+      Wednesday: {
+        Breakfast: ['Paratha', 'Curd', 'Pickle', 'Tea/Coffee'],
+        Lunch: ['Rice', 'Sambar', 'Cabbage Poriyal', 'Roti', 'Papad'],
+        Dinner: ['Fried Rice', 'Manchurian', 'Soup', 'Ice Cream']
+      },
+      Thursday: {
+        Breakfast: ['Upma', 'Vada', 'Coconut Chutney', 'Tea/Coffee'],
+        Lunch: ['Rice', 'Dal Fry', 'Bhindi Masala', 'Roti', 'Salad'],
+        Dinner: ['Biryani', 'Raita', 'Mirchi Ka Salan', 'Gulab Jamun']
+      },
+      Friday: {
+        Breakfast: ['Bread Toast', 'Omelette', 'Cornflakes', 'Tea/Coffee'],
+        Lunch: ['Rice', 'Kadhi', 'Aloo Matar', 'Roti', 'Pickle'],
+        Dinner: ['Roti', 'Dal Makhani', 'Mixed Veg', 'Kheer']
+      },
+      Saturday: {
+        Breakfast: ['Dosa', 'Sambar', 'Coconut Chutney', 'Tea/Coffee'],
+        Lunch: ['Rice', 'Fish Curry/Paneer', 'Beans Poriyal', 'Roti'],
+        Dinner: ['Pav Bhaji', 'Pulao', 'Onion Salad', 'Jaljeera']
+      },
+      Sunday: {
+        Breakfast: ['Chole Bhature', 'Lassi', 'Tea/Coffee'],
+        Lunch: ['Special Biryani', 'Raita', 'Salad', 'Sweet'],
+        Dinner: ['Pizza/Pasta', 'Soup', 'Garlic Bread', 'Ice Cream']
+      }
+    };
+
+    // Popular meals based on historical voting (simulated)
+    const popularMeals = ['Paneer Butter Masala', 'Biryani', 'Chole Bhature', 'Pizza/Pasta', 'Ice Cream', 'Dosa'];
+
+    // Settings defaults
+    let settings = JSON.parse(localStorage.getItem('smartmess_settings')) || {
+      hostelStrength: 500,
+      votingCloseTime: '11:00',
+      wasteThreshold: 15
+    };
+
+    // Voting data
+    let votingData = JSON.parse(localStorage.getItem('smartmess_votes')) || {
+      date: new Date().toDateString(),
+      eating: 289,
+      skipping: 53,
+      total: 342,
+      userVoted: false,
+      userChoice: null
+    };
+
+    // Reset voting if new day
+    if (votingData.date !== new Date().toDateString()) {
+      votingData = {
+        date: new Date().toDateString(),
+        eating: Math.floor(Math.random() * 100) + 200,
+        skipping: Math.floor(Math.random() * 50) + 20,
+        total: 0,
+        userVoted: false,
+        userChoice: null
+      };
+      votingData.total = votingData.eating + votingData.skipping;
+      saveVotingData();
+    }
+
+    // Staff entries
+    let staffEntries = JSON.parse(localStorage.getItem('smartmess_staff')) || [];
+
+    // ==========================================
+    // Utility Functions
+    // ==========================================
+
+    function saveVotingData() {
+      localStorage.setItem('smartmess_votes', JSON.stringify(votingData));
+    }
+
+    function saveSettings() {
+      localStorage.setItem('smartmess_settings', JSON.stringify(settings));
+    }
+
+    function saveStaffEntries() {
+      localStorage.setItem('smartmess_staff', JSON.stringify(staffEntries));
+    }
+
+    function getCurrentMealType() {
+      const hour = new Date().getHours();
+      if (hour >= 6 && hour < 10) return 'Breakfast';
+      if (hour >= 11 && hour < 15) return 'Lunch';
+      return 'Dinner';
+    }
+
+    function getTodayName() {
+      return DAYS[new Date().getDay() === 0 ? 6 : new Date().getDay() - 1];
+    }
+
+    function formatDate(date) {
+      return new Date(date).toLocaleDateString('en-US', {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      });
+    }
+
+    function showToast(message, type = 'success') {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      toast.className = `toast p-4 rounded-xl shadow-lg flex items-center gap-3 ${
+        type === 'success' ? 'bg-green-600' : type === 'error' ? 'bg-red-600' : 'bg-blue-600'
+      } text-white`;
+      toast.innerHTML = `
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          ${type === 'success' 
+            ? '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>'
+            : '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>'
+          }
+        </svg>
+        <span class="font-medium">${message}</span>
+      `;
+      container.appendChild(toast);
+      setTimeout(() => toast.remove(), 3000);
+    }
+
+    // ==========================================
+    // DEMAND INTELLIGENCE ENGINE (Rule-based v1)
+    // ==========================================
+    // This is where ML models can be integrated later
+    // Current implementation uses weighted rules
+
+    function calculateDemandPrediction() {
+      // Rule 1: Base demand from confirmed votes (weight: 70%)
+      const confirmedEating = votingData.eating;
+      
+      // Rule 2: Historical adjustment factor (weight: 20%)
+      // Simulated: typically 5-10% more show up than voted
+      const historicalAdjustment = 1.08;
+      
+      // Rule 3: Day-of-week factor (weight: 10%)
+      // Weekends typically have lower attendance
+      const dayIndex = new Date().getDay();
+      const dayFactor = (dayIndex === 0 || dayIndex === 6) ? 0.85 : 1.0;
+      
+      // Final prediction
+      const predictedAttendance = Math.round(
+        confirmedEating * 0.7 * historicalAdjustment +
+        (settings.hostelStrength * 0.3 * dayFactor * 0.6)
+      );
+      
+      // Food quantity: 0.5kg per person average
+      const foodQuantity = (predictedAttendance * 0.5).toFixed(1);
+      
+      // Confidence score based on response rate
+      const responseRate = votingData.total / settings.hostelStrength;
+      const confidence = Math.min(95, Math.round(responseRate * 100 + 20));
+      
+      return {
+        attendance: predictedAttendance,
+        quantity: foodQuantity,
+        confidence: confidence
+      };
+    }
+
+    // ML Integration Point:
+    // function mlPredictDemand(features) {
+    //   // features: { dayOfWeek, mealType, historicalData, weatherData, eventCalendar }
+    //   // return: { predictedCount, confidenceInterval, factors }
+    // }
+
+    // ==========================================
+    // Module Navigation
+    // ==========================================
+
+    function switchModule(moduleName) {
+      // Hide all modules
+      document.querySelectorAll('.module').forEach(m => m.classList.add('hidden'));
+      
+      // Show selected module
+      document.getElementById(`module-${moduleName}`).classList.remove('hidden');
+      
+      // Update nav
+      document.querySelectorAll('.nav-link').forEach(n => n.classList.remove('active'));
+      document.getElementById(`nav-${moduleName}`).classList.add('active');
+      
+      // Initialize module-specific content
+      if (moduleName === 'student') initStudentModule();
+      if (moduleName === 'dashboard') initDashboardModule();
+      if (moduleName === 'staff') initStaffModule();
+      if (moduleName === 'menu') initMenuModule();
+      if (moduleName === 'analytics') initAnalyticsModule();
+      if (moduleName === 'settings') initSettingsModule();
+    }
+
+    // ==========================================
+    // Student Module
+    // ==========================================
+
+    function initStudentModule() {
+      // Set date
+      document.getElementById('current-date').textContent = formatDate(new Date());
+      document.getElementById('current-meal-type').textContent = `${getCurrentMealType()} Time`;
+      
+      // Render today's menu
+      const todayMenu = weeklyMenu[getTodayName()][getCurrentMealType()];
+      const menuContainer = document.getElementById('todays-menu');
+      menuContainer.innerHTML = todayMenu.map(item => `
+        <div class="flex items-center gap-3 p-3 rounded-lg ${popularMeals.includes(item) ? 'menu-highlight' : 'bg-slate-50'}">
+          <div class="w-8 h-8 rounded-lg ${popularMeals.includes(item) ? 'gradient-orange' : 'gradient-blue'} flex items-center justify-center">
+            <span class="text-white text-sm">🍽️</span>
+          </div>
+          <span class="font-medium text-slate-700">${item}</span>
+          ${popularMeals.includes(item) ? '<span class="ml-auto popular-badge text-xs px-2 py-0.5 rounded-full text-white">Popular</span>' : ''}
+        </div>
+      `).join('');
+      
+      // Update stats
+      updateStudentStats();
+      
+      // Check if already voted
+      if (votingData.userVoted) {
+        document.getElementById('voting-section').classList.add('hidden');
+        document.getElementById('voted-section').classList.remove('hidden');
+        document.getElementById('vote-result-text').textContent = 
+          votingData.userChoice === 'eat' 
+            ? 'You indicated you will eat this meal.' 
+            : 'You indicated you will skip this meal.';
+      } else {
+        document.getElementById('voting-section').classList.remove('hidden');
+        document.getElementById('voted-section').classList.add('hidden');
+      }
+      
+      // Start countdown
+      startCountdown();
+    }
+
+    function updateStudentStats() {
+      const responsePercent = Math.round((votingData.total / settings.hostelStrength) * 100);
+      
+      document.getElementById('live-attendance').textContent = votingData.eating;
+      document.getElementById('response-percent').textContent = `${responsePercent}%`;
+      document.getElementById('response-bar').style.width = `${responsePercent}%`;
+      
+      // Sidebar updates
+      document.getElementById('sidebar-total').textContent = settings.hostelStrength;
+      document.getElementById('sidebar-responded').textContent = votingData.total;
+      document.getElementById('sidebar-eating').textContent = votingData.eating;
+      document.getElementById('sidebar-skipping').textContent = votingData.skipping;
+      document.getElementById('sidebar-progress').style.width = `${responsePercent}%`;
+    }
+
+    function submitVote(choice) {
+      if (votingData.userVoted) return;
+      
+      votingData.userVoted = true;
+      votingData.userChoice = choice;
+      votingData.total++;
+      
+      if (choice === 'eat') {
+        votingData.eating++;
+      } else {
+        votingData.skipping++;
+      }
+      
+      saveVotingData();
+      
+      // Update UI
+      document.getElementById('voting-section').classList.add('hidden');
+      document.getElementById('voted-section').classList.remove('hidden');
+      document.getElementById('vote-result-text').textContent = 
+        choice === 'eat' 
+          ? 'You indicated you will eat this meal.' 
+          : 'You indicated you will skip this meal.';
+      
+      updateStudentStats();
+      showToast('Your response has been recorded!', 'success');
+    }
+
+    function startCountdown() {
+      function updateCountdown() {
+        const now = new Date();
+        const closeTime = settings.votingCloseTime.split(':');
+        const closeDate = new Date();
+        closeDate.setHours(parseInt(closeTime[0]), parseInt(closeTime[1]), 0);
+        
+        if (now > closeDate) {
+          closeDate.setDate(closeDate.getDate() + 1);
+        }
+        
+        const diff = closeDate - now;
+        const hours = Math.floor(diff / (1000 * 60 * 60));
+        const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        const secs = Math.floor((diff % (1000 * 60)) / 1000);
+        
+        const timeStr = `${hours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+        
+        document.getElementById('countdown-timer').textContent = timeStr;
+        document.getElementById('sidebar-countdown').textContent = timeStr;
+        
+        // Progress bar (assuming 24h cycle)
+        const totalMins = 24 * 60;
+        const remainingMins = hours * 60 + mins;
+        const progress = 100 - (remainingMins / totalMins * 100);
+        document.getElementById('countdown-bar').style.width = `${Math.min(100, progress)}%`;
+      }
+      
+      updateCountdown();
+      setInterval(updateCountdown, 1000);
+    }
+
+    // ==========================================
+    // Dashboard Module
+    // ==========================================
+
+    function initDashboardModule() {
+      const prediction = calculateDemandPrediction();
+      
+      document.getElementById('kpi-attendance').textContent = prediction.attendance;
+      document.getElementById('kpi-confidence').textContent = `${prediction.confidence}%`;
+      document.getElementById('kpi-quantity').textContent = `${prediction.quantity} kg`;
+      
+      // Calculate waste reduction from staff entries
+      if (staffEntries.length > 0) {
+        const recentEntries = staffEntries.slice(-7);
+        const avgWaste = recentEntries.reduce((sum, e) => sum + (e.wasted / e.prepared * 100), 0) / recentEntries.length;
+        const reduction = Math.max(0, Math.round(45 - avgWaste)); // 45% was baseline
+        document.getElementById('kpi-waste').textContent = `${reduction}%`;
+      }
+    }
+
+    // ==========================================
+    // Staff Module
+    // ==========================================
+
+    function initStaffModule() {
+      // Set today's date
+      document.getElementById('date-input').value = new Date().toISOString().split('T')[0];
+      
+      // Render entries
+      renderStaffEntries();
+    }
+
+    function renderStaffEntries() {
+      const container = document.getElementById('staff-entries');
+      
+      if (staffEntries.length === 0) {
+        container.innerHTML = `
+          <div class="text-center py-8 text-slate-500">
+            <svg class="w-12 h-12 mx-auto mb-3 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+            </svg>
+            <p>No entries yet. Start logging food data above.</p>
+          </div>
+        `;
+        return;
+      }
+      
+      container.innerHTML = staffEntries.slice().reverse().map(entry => {
+        const wastePercent = ((entry.wasted / entry.prepared) * 100).toFixed(1);
+        const isAnomaly = wastePercent > settings.wasteThreshold;
+        
+        return `
+          <div class="p-3 rounded-lg border ${isAnomaly ? 'anomaly-row' : 'border-slate-200 bg-slate-50'}">
+            <div class="flex items-center justify-between mb-2">
+              <span class="font-medium text-slate-800 capitalize">${entry.mealType}</span>
+              <span class="text-xs text-slate-500">${formatDate(entry.date)}</span>
+            </div>
+            <div class="flex items-center justify-between text-sm">
+              <span class="text-slate-600">Prepared: ${entry.prepared} kg</span>
+              <span class="text-slate-600">Wasted: ${entry.wasted} kg</span>
+              <span class="${isAnomaly ? 'text-red-600 font-medium' : 'text-green-600'}">${wastePercent}%</span>
+            </div>
+            ${isAnomaly ? '<p class="text-xs text-red-600 mt-1">⚠️ High waste - above threshold</p>' : ''}
+          </div>
+        `;
+      }).join('');
+    }
+
+    document.getElementById('staff-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const entry = {
+        mealType: document.getElementById('meal-type-input').value,
+        date: document.getElementById('date-input').value,
+        prepared: parseFloat(document.getElementById('prepared-input').value),
+        wasted: parseFloat(document.getElementById('wasted-input').value),
+        timestamp: Date.now()
+      };
+      
+      if (!entry.prepared || !entry.wasted) {
+        showToast('Please fill in all fields', 'error');
+        return;
+      }
+      
+      staffEntries.push(entry);
+      saveStaffEntries();
+      
+      // Clear form
+      document.getElementById('prepared-input').value = '';
+      document.getElementById('wasted-input').value = '';
+      
+      renderStaffEntries();
+      showToast('Entry logged successfully!', 'success');
+    });
+
+    // ==========================================
+    // Menu Module
+    // ==========================================
+
+    let menuEditMode = false;
+
+    function initMenuModule() {
+      renderWeeklyMenu();
+    }
+
+    function renderWeeklyMenu() {
+      const container = document.getElementById('weekly-menu-grid');
+      const todayName = getTodayName();
+      
+      container.innerHTML = DAYS.map(day => {
+        const isToday = day === todayName;
+        
+        return `
+          <div class="card p-4 ${isToday ? 'ring-2 ring-blue-500' : ''}">
+            <div class="flex items-center justify-between mb-3">
+              <h4 class="font-semibold text-slate-800">${day}</h4>
+              ${isToday ? '<span class="text-xs px-2 py-0.5 rounded-full bg-blue-100 text-blue-700">Today</span>' : ''}
+            </div>
+            ${MEALS.map(meal => `
+              <div class="mb-3">
+                <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">${meal}</p>
+                <div class="space-y-1">
+                  ${weeklyMenu[day][meal].map(item => `
+                    <div class="flex items-center gap-1 text-sm ${menuEditMode ? 'cursor-pointer hover:bg-slate-100 p-1 rounded' : ''}" 
+                         ${menuEditMode ? `onclick="editMenuItem('${day}', '${meal}', '${item}')"` : ''}>
+                      ${popularMeals.includes(item) ? '<span class="w-1.5 h-1.5 rounded-full bg-orange-500"></span>' : '<span class="w-1.5 h-1.5 rounded-full bg-slate-300"></span>'}
+                      <span class="text-slate-600">${item}</span>
+                    </div>
+                  `).join('')}
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        `;
+      }).join('');
+    }
+
+    function toggleMenuEdit() {
+      menuEditMode = !menuEditMode;
+      const btn = document.getElementById('edit-menu-btn');
+      
+      if (menuEditMode) {
+        btn.innerHTML = `
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+          Done Editing
+        `;
+        btn.classList.remove('btn-primary');
+        btn.classList.add('btn-success');
+        showToast('Click on any menu item to edit', 'info');
+      } else {
+        btn.innerHTML = `
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+          Edit Menu
+        `;
+        btn.classList.add('btn-primary');
+        btn.classList.remove('btn-success');
+      }
+      
+      renderWeeklyMenu();
+    }
+
+    function editMenuItem(day, meal, item) {
+      if (!menuEditMode) return;
+      
+      // Create inline edit modal
+      const overlay = document.createElement('div');
+      overlay.className = 'fixed inset-0 bg-black/50 flex items-center justify-center z-50';
+      overlay.innerHTML = `
+        <div class="bg-white rounded-2xl p-6 max-w-sm w-full mx-4 shadow-2xl">
+          <h3 class="text-lg font-semibold text-slate-800 mb-4">Edit Menu Item</h3>
+          <p class="text-sm text-slate-500 mb-2">${day} - ${meal}</p>
+          <input type="text" id="edit-item-input" value="${item}" class="w-full px-4 py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 mb-4">
+          <div class="flex gap-2">
+            <button onclick="saveMenuEdit('${day}', '${meal}', '${item}')" class="flex-1 btn-primary text-white py-2 rounded-xl font-medium">Save</button>
+            <button onclick="this.closest('.fixed').remove()" class="flex-1 py-2 border border-slate-300 rounded-xl font-medium text-slate-700">Cancel</button>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(overlay);
+      document.getElementById('edit-item-input').focus();
+    }
+
+    function saveMenuEdit(day, meal, oldItem) {
+      const newItem = document.getElementById('edit-item-input').value.trim();
+      if (newItem) {
+        const index = weeklyMenu[day][meal].indexOf(oldItem);
+        if (index > -1) {
+          weeklyMenu[day][meal][index] = newItem;
+        }
+        renderWeeklyMenu();
+        showToast('Menu updated!', 'success');
+      }
+      document.querySelector('.fixed.inset-0').remove();
+    }
+
+    // ==========================================
+    // Analytics Module
+    // ==========================================
+
+    let analyticsPeriod = 'week';
+
+    function initAnalyticsModule() {
+      renderInsights();
+    }
+
+    function setAnalyticsPeriod(period) {
+      analyticsPeriod = period;
+      
+      document.getElementById('period-week').className = `px-4 py-2 rounded-lg text-sm font-medium ${period === 'week' ? 'bg-blue-100 text-blue-700' : 'bg-slate-100 text-slate-600'}`;
+      document.getElementById('period-month').className = `px-4 py-2 rounded-lg text-sm font-medium ${period === 'month' ? 'bg-blue-100 text-blue-700' : 'bg-slate-100 text-slate-600'}`;
+      
+      // Update stats based on period
+      if (period === 'month') {
+        document.getElementById('analytics-attendance').textContent = '298';
+        document.getElementById('analytics-waste').textContent = '18.2 kg';
+        document.getElementById('analytics-accuracy').textContent = '89%';
+      } else {
+        document.getElementById('analytics-attendance').textContent = '312';
+        document.getElementById('analytics-waste').textContent = '16.5 kg';
+        document.getElementById('analytics-accuracy').textContent = '91%';
+      }
+    }
+
+    function renderInsights() {
+      // Rule-based insight generation
+      // ML Integration Point: Replace with actual ML model insights
+      
+      const insights = [
+        {
+          icon: '🍛',
+          title: 'Paneer dishes show 23% higher attendance',
+          description: 'Meals featuring paneer consistently attract more students. Consider adding paneer options on low-attendance days.',
+          type: 'positive'
+        },
+        {
+          icon: '📅',
+          title: 'Friday dinners have lowest wastage',
+          description: 'Only 8% average waste on Friday dinners. This correlates with popular items like Dal Makhani and Kheer.',
+          type: 'positive'
+        },
+        {
+          icon: '⚠️',
+          title: 'Monday breakfasts under-attended',
+          description: 'Only 45% of students attend Monday breakfast. Consider adjusting preparation quantity.',
+          type: 'warning'
+        },
+        {
+          icon: '📊',
+          title: 'Weekend attendance drops by 35%',
+          description: 'Many students leave campus on weekends. Current prediction model accounts for this pattern.',
+          type: 'info'
+        },
+        {
+          icon: '🎯',
+          title: 'Special meals boost attendance by 28%',
+          description: 'Biryani Sundays and Pizza nights show significant attendance increase. Consider monthly special menu events.',
+          type: 'positive'
+        }
+      ];
+      
+      const container = document.getElementById('insights-container');
+      container.innerHTML = insights.map(insight => `
+        <div class="insight-card p-4 bg-slate-50 rounded-lg ${
+          insight.type === 'positive' ? 'border-l-green-500' : 
+          insight.type === 'warning' ? 'border-l-orange-500' : 'border-l-blue-500'
+        }">
+          <div class="flex items-start gap-3">
+            <span class="text-2xl">${insight.icon}</span>
+            <div>
+              <h4 class="font-semibold text-slate-800">${insight.title}</h4>
+              <p class="text-sm text-slate-600 mt-1">${insight.description}</p>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // ==========================================
+    // Settings Module
+    // ==========================================
+
+    function initSettingsModule() {
+      document.getElementById('hostel-strength').value = settings.hostelStrength;
+      document.getElementById('voting-close-time').value = settings.votingCloseTime;
+      document.getElementById('waste-threshold').value = settings.wasteThreshold;
+    }
+
+    document.getElementById('settings-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      settings.hostelStrength = parseInt(document.getElementById('hostel-strength').value);
+      settings.votingCloseTime = document.getElementById('voting-close-time').value;
+      settings.wasteThreshold = parseInt(document.getElementById('waste-threshold').value);
+      
+      saveSettings();
+      showToast('Settings saved successfully!', 'success');
+      
+      // Update sidebar
+      document.getElementById('sidebar-total').textContent = settings.hostelStrength;
+    });
+
+    function resetDailyVoting() {
+      votingData = {
+        date: new Date().toDateString(),
+        eating: 0,
+        skipping: 0,
+        total: 0,
+        userVoted: false,
+        userChoice: null
+      };
+      saveVotingData();
+      updateStudentStats();
+      showToast('Daily voting has been reset', 'success');
+    }
+
+    function resetWeeklyData() {
+      // Create confirmation dialog
+      const overlay = document.createElement('div');
+      overlay.className = 'fixed inset-0 bg-black/50 flex items-center justify-center z-50';
+      overlay.innerHTML = `
+        <div class="bg-white rounded-2xl p-6 max-w-sm w-full mx-4 shadow-2xl">
+          <h3 class="text-lg font-semibold text-slate-800 mb-2">Reset All Data?</h3>
+          <p class="text-sm text-slate-500 mb-4">This will clear all voting data and staff entries. This action cannot be undone.</p>
+          <div class="flex gap-2">
+            <button onclick="confirmReset()" class="flex-1 btn-danger text-white py-2 rounded-xl font-medium">Reset All</button>
+            <button onclick="this.closest('.fixed').remove()" class="flex-1 py-2 border border-slate-300 rounded-xl font-medium text-slate-700">Cancel</button>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(overlay);
+    }
+
+    function confirmReset() {
+      localStorage.removeItem('smartmess_votes');
+      localStorage.removeItem('smartmess_staff');
+      
+      votingData = {
+        date: new Date().toDateString(),
+        eating: 0,
+        skipping: 0,
+        total: 0,
+        userVoted: false,
+        userChoice: null
+      };
+      staffEntries = [];
+      
+      document.querySelector('.fixed.inset-0').remove();
+      showToast('All data has been reset', 'success');
+      
+      initStudentModule();
+    }
+
+    // ==========================================
+    // Initialize App
+    // ==========================================
+
+    document.addEventListener('DOMContentLoaded', function() {
+      initStudentModule();
+    });
+  </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9c0fb2ae26d0596b',t:'MTc2ODkyMzkxNi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
