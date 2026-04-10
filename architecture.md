@@ -10,7 +10,6 @@ is captured before food preparation and refined using AI.
 - Backend: Cloud Functions for data handling
 - AI Layer: Demand prediction using voting + historical data
 - Database: Firestore for real-time data storage
-
 ## Key Principle
 Prediction happens before cooking, not after waste.
 # SmartMess – System Architecture
