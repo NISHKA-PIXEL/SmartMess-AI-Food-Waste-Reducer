@@ -16,6 +16,7 @@ Prediction happens before cooking, not after waste.
 
 ## Overview
 SmartMess follows a human-in-the-loop architecture where student intent
+
 is captured before food preparation and refined using AI.
 
 ## Key Components
