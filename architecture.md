@@ -2,7 +2,7 @@
 
 ## Overview
 SmartMess follows a human-in-the-loop architecture where student intent
-is captured before food preparation and refined using AI.
+is captured before food preparation and refine by ai
 ## Key Components
 - User Layer: Students, Mess Staff, Wardens
 - Frontend: Web/Mobile interfaces for voting and dashboards
