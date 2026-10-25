@@ -1,15 +1,4 @@
-/*
- * SmartMess Demand Prediction Engine (adaptive baseline)
- *
- * Add this file to the same folder as index.html and include it AFTER the
- * existing inline application script:
- *   <script src="smartmess-prediction.js"></script>
- *
- * This is a transparent statistical baseline, not a trained ML model.
- * It learns a rough historical attendance proxy from food consumed
- * (prepared kg - wasted kg) / kg per student. Replace this with a trained
- * model when you have enough clean, labelled data.
- */
+
 (function () {
   'use strict';
 
